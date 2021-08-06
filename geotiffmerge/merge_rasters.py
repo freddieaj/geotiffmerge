@@ -20,24 +20,14 @@ def search_for_worldfile(path):
         
 def merge_rasters(outfile, *infiles):
     # A function to read on-disk input rasters, merge them, and write the output
-    
-    # Read the first input and its worldfile
-    main_img =  PIL.Image.open(infiles[0])
-    worldfile_path = search_for_worldfile(infiles[0])
-    worldfile = open(worldfile_path)
-    
+                     
     # Read the metadata tags into a dict
-    raw_tags = dict(main_img.tag.items())
-
-    # Read the worldfile and extract the georeferencing information
-    worldfile_txt = worldfile.read()
-    xscale,yskew,xskew,yscale,xoff,yoff = worldfile_txt.split()
-    transform_coeffs = xscale,xskew,xoff,yskew,yscale,yoff
+    raw_tags = dict(PIL.Image.open(infiles[0]).tag.items())
 
     # Read the colour palette
-    col_palette = main_img.getpalette()
+    col_palette = PIL.Image.open(infiles[0]).getpalette()
     
-    #Create the merged array and it's transform coefficients
+    #Create the merged array and its transform coefficients
     merged_array, meta, tags = create_merged_array(*infiles)
     new_img = PIL.Image.fromarray(merged_array[0])
     new_img.putpalette(col_palette)
